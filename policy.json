@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Stmt1658256008892",
+        "Action": "kms:*",
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Sid": "Stmt1658259111196",
+        "Action": [
+          "kms:CreateAlias",
+          "kms:CreateCustomKeyStore",
+          "kms:CreateGrant",
+          "kms:CreateKey"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ]
+  }
