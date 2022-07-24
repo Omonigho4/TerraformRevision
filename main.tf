@@ -36,3 +36,66 @@ principals {
     resources = ["*"]
   }
 }
+resource "aws_instance" "State_Instance" {
+    ami = "ami-0022f774911c1d690"
+    instance_type = "t2.micro"
+    key_name = "JSL_Key"
+    iam_instance_profile = aws_iam_instance_profile.S3_Ddb_instance_profile.name
+    associate_public_ip_address = true
+    tags = {
+      "Name" = "State-Instance"
+    }
+  
+}
+resource "aws_iam_role" "ec2_s3_Ddb_role" {
+  name="ec2_s3_Ddb_rw_role"
+assume_role_policy = jsonencode(
+{
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ec2_s3_Ddb_role_policy" {
+  name = "ec2_s3_role_policy"
+  role = aws_iam_role.ec2_s3_Ddb_role.id
+  policy = jsonencode(
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1658689700964",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Stmt1658689913085",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+})
+}
+
+resource "aws_iam_instance_profile" "S3_Ddb_instance_profile" {
+    name = "ec2_s3_Ddb_instance_profile"
+    role = aws_iam_role.ec2_s3_Ddb_role.name 
+  
+}
